@@ -1,21 +1,22 @@
+<!-- src/App.vue -->
+<template>
+  <div id="app">
+    <JSON />   <!-- 显示你做的 JSON 页面 -->
+  </div>
+</template>
+
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import JSON from './components/JSON.vue'  // 注意路径和文件名
 </script>
 
-<template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+<style scoped>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  text-align: center;
+  margin-top: 20px;
+}
+</style>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
-</template>
 
 <style scoped>
 header {
