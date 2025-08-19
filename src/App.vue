@@ -1,12 +1,13 @@
 <!-- src/App.vue -->
 <template>
   <div id="app">
-    <JSON />   <!-- 显示你做的 JSON 页面 -->
+    <Form />   
   </div>
 </template>
 
 <script setup>
-import JSON from './components/JSON.vue'  // 注意路径和文件名
+import JSON from './components/JSON.vue'  
+import Form from './components/Form.vue'
 </script>
 
 <style scoped>
