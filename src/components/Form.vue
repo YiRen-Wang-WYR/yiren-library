@@ -41,6 +41,7 @@
                 </label>
               </div>
             </div>
+          </div>
 
             <div class="col-md-6">
               <label for="gender" class="form-label">Gender</label>
@@ -48,13 +49,16 @@
                 id="gender"
                 class="form-select"
                 v-model="formData.gender"
+                @change="() => validateGender(true)"
+                @blur="() => validateGender(true)"
               >
+                <option value="" disabled>Select…</option>  <!-- 确保必选 -->
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="other">Other</option>
               </select>
+              <div v-if="errors.gender" class="text-danger">{{ errors.gender }}</div>
             </div>
-          </div>
 
           <!-- Third row: Reasons for inclusion -->
           <div class="mb-3">
@@ -64,7 +68,14 @@
               class="form-control"
               rows="3"
               v-model="formData.reason"
+              :maxlength="REASON_MAX"
+              @input="() => validateReason(false)"
+              @blur="() => validateReason(true)"
             ></textarea>
+            <div class="d-flex justify-content-between">
+              <small v-if="errors.reason" class="text-danger">{{ errors.reason }}</small>
+              <small class="text-muted ms-auto">{{ formData.reason.length }}/{{ REASON_MAX }}</small>
+            </div>
           </div>
 
           <!-- button -->
@@ -110,7 +121,7 @@
 
 <script setup>
 import { ref } from 'vue';
-
+const REASON_MAX = 100;  // Limit to one hundred characters.
 
   
   const formData = ref({
@@ -123,14 +134,6 @@ import { ref } from 'vue';
   
   const submittedCards = ref([]);
   
-  const submitForm = () => {
-    validateName(true);
-    validatePassword(true);
-    if (!errors.value.username && !errors.value.password) {
-      submittedCards.value.push({ ...formData.value });
-      clearForm();
-    }
-  };
 
   const errors = ref({
     username: null,
@@ -164,6 +167,41 @@ import { ref } from 'vue';
       errors.value.password = null;
     }
   };
+
+  const validateGender = (blur = false) => {
+  const g = formData.value.gender;
+  if (!g) {
+    if (blur) errors.value.gender = 'Please select a gender';
+  } else {
+    errors.value.gender = null;
+  }
+};
+
+const validateReason = (blur = false) => {
+  const r = String(formData.value.reason ?? '');
+  if (r.length > REASON_MAX) {
+    if (blur) errors.value.reason = `Reason must be within ${REASON_MAX} characters`;
+  } else {
+    errors.value.reason = null;
+  }
+};
+
+const submitForm = () => {
+  validateName(true);
+  validatePassword(true);
+  validateGender(true);   // ✅ 新增
+  validateReason(true);   // ✅ 新增
+
+  if (
+    !errors.value.username &&
+    !errors.value.password &&
+    !errors.value.gender &&
+    !errors.value.reason
+  ) {
+    submittedCards.value.push({ ...formData.value });
+    clearForm();
+  }
+};
 </script>
 
 <style scoped>
