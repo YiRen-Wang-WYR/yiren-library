@@ -5,6 +5,13 @@ h1 {
     text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
 }
 
+
+ /* Class selectors */
+ .form {
+    text-align: center;
+    margin-top: 50px;
+}
+
  /* ID selectors */
  #username:focus,
  #password:focus,

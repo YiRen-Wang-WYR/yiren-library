@@ -4,22 +4,29 @@
       <div class="col-md-8 offset-md-2">
         <h1 class="text-center">User Information Form</h1>
 
-        <!-- 提交时阻止默认刷新，转为调用 submitForm -->
+         <!-- When submitting, prevent the default refresh and instead call the submitForm -->
         <form @submit.prevent="submitForm">
           <!-- first row -->
           <div class="row mb-3">
             <div class="col-md-6">
               <label for="username" class="form-label">Username</label>
-              <input type="text" class="form-control" id="username" required v-model="formData.username" />
-            </div>
-
+              <input type="text" class="form-control" id="username" 
+              @blur="() => validateName(true)"
+              @input="() => validateName(false)"
+              v-model="formData.username"/>
+            <div v-if="errors.username" class="text-danger">{{ errors.username }}</div>
+          </div>
             <div class="col-md-6">
               <label for="password" class="form-label">Password</label>
-              <input type="password" calss="from-control" id="password" minlength="4" maxlength="10" v-model="formData.password" />
+              <input type="password" class="form-control" id="password"
+                @blur="() => validatePassword(true)"
+                @input="() => validatePassword(false)" 
+                v-model="formData.password"/>
+              <div v-if="errors.password" class="text-danger">{{ errors.password }}</div>
             </div>
           </div>
 
-          <!-- 第二行：是否澳洲居民 & 性别 -->
+          <!-- Second row: Are you an Australian resident? & Gender -->
           <div class="row mb-3">
             <div class="col-md-6">
               <div class="form-check">
@@ -49,7 +56,7 @@
             </div>
           </div>
 
-          <!-- 第三行：加入原因 -->
+          <!-- Third row: Reasons for inclusion -->
           <div class="mb-3">
             <label for="reason" class="form-label">Reason for joining</label>
             <textarea
@@ -60,7 +67,7 @@
             ></textarea>
           </div>
 
-          <!-- 按钮 -->
+          <!-- button -->
           <div class="text-center">
             <button type="submit" class="btn btn-primary me-2">Submit</button>
             <button type="button" class="btn btn-secondary" @click="clearForm">
@@ -72,26 +79,39 @@
     </div>
   </div>
     <div class="row mt-5" v-if="submittedCards.length">
-   <div class="d-flex flex-wrap justify-content-start">
-      <div v-for="(card, index) in submittedCards" :key="index" class="card m-2" style="width: 18rem;">
+      <div class="col-12 col-lg-10 offset-lg-1">
+      
          <div class="card-header">
             User Information
          </div>
-         <ul class="list-group list-group-flush">
-            <li class="list-group-item">Username: {{ card.username }}</li>
-            <li class="list-group-item">Password: {{ card.password }}</li>
-            <li class="list-group-item">Australian Resident: {{ card.isAustralian ? 'Yes' : 'No' }}</li>
-            <li class="list-group-item">Gender: {{ card.gender }}</li>
-            <li class="list-group-item">Reason: {{ card.reason }}</li>
-         </ul>
+         <DataTable
+            :value="submittedCards"
+            stripedRows
+            :rows="5"
+            paginator
+            responsiveLayout="scroll"
+            tableStyle="min-width: 60rem; width: 100%"
+            class="mt-3"
+          >
+            <Column field="username" header="Username" />
+            <Column field="password" header="Password" />
+            <Column field="isAustralian" header="Australian Resident">
+  <template #body="{ data }">
+    {{ data.isAustralian ? 'Yes' : 'No' }}
+  </template>
+</Column>
+            <Column field="gender" header="Gender" />
+            <Column field="reason" header="Reason" />
+        </DataTable>
       </div>
    </div>
-</div>
   </template>
   
 
 <script setup>
 import { ref } from 'vue';
+
+
   
   const formData = ref({
       username: '',
@@ -104,9 +124,45 @@ import { ref } from 'vue';
   const submittedCards = ref([]);
   
   const submitForm = () => {
-      submittedCards.value.push({
-          ...formData.value
-      });
+    validateName(true);
+    validatePassword(true);
+    if (!errors.value.username && !errors.value.password) {
+      submittedCards.value.push({ ...formData.value });
+      clearForm();
+    }
+  };
+
+  const errors = ref({
+    username: null,
+    password: null,
+    resident: null,
+    gender: null,
+    reason: null,
+  })
+
+  const validateName = (blur) => {
+    if (formData.value.username.length < 3){
+        if (blur) errors.value.username = "Name must be at least 3 characters";
+    } else {
+        errors.value.username = null;
+    }
+  };
+
+  const validatePassword = (blur) => {
+    const  password = formData.value.password;
+    const minlength = 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    if (password.length < minlength) {
+      if (blur) errors.value.password = `Password must be at least ${minlength} characters`;
+    } else if (!hasUppercase || !hasLowercase || !hasNumber || !hasSpecialChar) {
+      if (blur) errors.value.password = "Password must contain uppercase, lowercase, number, and special character";
+    } else {
+      errors.value.password = null;
+    }
   };
 </script>
 
