@@ -17,6 +17,26 @@
             <div v-if="errors.username" class="text-danger">{{ errors.username }}</div>
           </div>
             <div class="col-md-6">
+              <label for="gender" class="form-label">Gender</label>
+              <select
+                id="gender"
+                class="form-select"
+                v-model="formData.gender"
+                @change="() => validateGender(true)"
+                @blur="() => validateGender(true)"
+              >
+                <option value="" disabled>Select…</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+              <div v-if="errors.gender" class="text-danger">{{ errors.gender }}</div>
+            </div>
+          </div>
+
+          <!-- second row - password fields -->
+          <div class="row mb-3">
+            <div class="col-md-6">
               <label for="password" class="form-label">Password</label>
               <input type="password" class="form-control" id="password"
                 @blur="() => validatePassword(true)"
@@ -24,9 +44,21 @@
                 v-model="formData.password"/>
               <div v-if="errors.password" class="text-danger">{{ errors.password }}</div>
             </div>
+            <div class="col-md-6">
+              <label for="confirm-password" class="form-label">Confirm password</label>
+              <input 
+                type="password"
+                class="form-control"
+                id="confirm-password"
+                v-model="formData.confirmPassword"
+                @blur="() => validateConfirmPassword(true)"
+                @input="() => validateConfirmPassword(false)"
+              />
+              <div v-if="errors.confirmPassword" class="text-danger">{{ errors.confirmPassword }}</div>
+            </div>
           </div>
 
-          <!-- Second row: Are you an Australian resident? & Gender -->
+          <!-- Third row: Are you an Australian resident? -->
           <div class="row mb-3">
             <div class="col-md-6">
               <div class="form-check">
@@ -43,23 +75,6 @@
             </div>
           </div>
 
-            <div class="col-md-6">
-              <label for="gender" class="form-label">Gender</label>
-              <select
-                id="gender"
-                class="form-select"
-                v-model="formData.gender"
-                @change="() => validateGender(true)"
-                @blur="() => validateGender(true)"
-              >
-                <option value="" disabled>Select…</option>  <!-- 确保必选 -->
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
-              <div v-if="errors.gender" class="text-danger">{{ errors.gender }}</div>
-            </div>
-
           <!-- Third row: Reasons for inclusion -->
           <div class="mb-3">
             <label for="reason" class="form-label">Reason for joining</label>
@@ -73,7 +88,10 @@
               @blur="() => validateReason(true)"
             ></textarea>
             <div class="d-flex justify-content-between">
-              <small v-if="errors.reason" class="text-danger">{{ errors.reason }}</small>
+              <div>
+                <small v-if="errors.reason" class="text-danger">{{ errors.reason }}</small>
+                <small v-if="successMessages.reason" class="text-success">{{ successMessages.reason }}</small>
+              </div>
               <small class="text-muted ms-auto">{{ formData.reason.length }}/{{ REASON_MAX }}</small>
             </div>
           </div>
@@ -129,7 +147,8 @@ const REASON_MAX = 100;  // Limit to one hundred characters.
       password: '',
       isAustralian: false,
       reason: '',
-      gender: ''
+      gender: '',
+      confirmPassword: ''
   });
   
   const submittedCards = ref([]);
@@ -141,6 +160,11 @@ const REASON_MAX = 100;  // Limit to one hundred characters.
     resident: null,
     gender: null,
     reason: null,
+    confirmPassword: null
+  })
+
+  const successMessages = ref({
+    reason: null
   })
 
   const validateName = (blur) => {
@@ -181,27 +205,59 @@ const validateReason = (blur = false) => {
   const r = String(formData.value.reason ?? '');
   if (r.length > REASON_MAX) {
     if (blur) errors.value.reason = `Reason must be within ${REASON_MAX} characters`;
+    successMessages.value.reason = null;
   } else {
     errors.value.reason = null;
+    // Check if the reason contains the word 'friend'
+    if (r.toLowerCase().includes('friend')) {
+      successMessages.value.reason = "Great to have a friend!";
+    } else {
+      successMessages.value.reason = null;
+    }
   }
 };
+
+const validateConfirmPassword = (blur) => {
+  if (formData.value.password !== formData.value.confirmPassword) {
+    if (blur) errors.value.confirmPassword = 'Passwords do not match.'
+  } else {
+    errors.value.confirmPassword = null
+  }
+}
 
 const submitForm = () => {
   validateName(true);
   validatePassword(true);
-  validateGender(true);   // ✅ 新增
-  validateReason(true);   // ✅ 新增
+  validateGender(true);   
+  validateReason(true);   
+  validateConfirmPassword(true);
 
   if (
     !errors.value.username &&
     !errors.value.password &&
     !errors.value.gender &&
-    !errors.value.reason
+    !errors.value.reason &&
+    !errors.value.confirmPassword
   ) {
     submittedCards.value.push({ ...formData.value });
     clearForm();
   }
 };
+
+const clearForm = () => {
+  formData.value = {
+    username:'',
+    password:'',
+    confirmPassword:'',
+    isAustralian:false,
+    reason:'',
+    gender:'',
+  }
+  // Clear success messages when form is cleared
+  successMessages.value.reason = null;
+}
+
+
 </script>
 
 <style scoped>
