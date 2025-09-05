@@ -1,25 +1,37 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-// import bootstrap css
-import 'bootstrap/dist/css/bootstrap.min.css';
-// import './style.css
+import router from './router'
+import './assets/main.css'
+
+// Import Bootstrap CSS
+import 'bootstrap/dist/css/bootstrap.min.css'
+
+// Import PrimeVue
 import PrimeVue from 'primevue/config'
-import Aura from '@primeuix/themes/aura';
+import Aura from '@primeuix/themes/aura'
 
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import ColumnGroup from 'primevue/columngroup'
+import Row from 'primevue/row'
 
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import ColumnGroup from 'primevue/columngroup';   // optional
-import Row from 'primevue/row';                   // optional
-const app = createApp(App);
+const app = createApp(App)
+
+// Configure PrimeVue
 app.use(PrimeVue, {
-    theme: {
-        preset:Aura
-    }
+  theme: {
+    preset: Aura
+  }
 })
-app.component('DataTable', DataTable);
-app.component('Column', Column);
-app.component('ColumnGroup', ColumnGroup);
-app.component('Row', Row);
 
-app.mount('#app');
+// Register PrimeVue components
+app.component('DataTable', DataTable)
+app.component('Column', Column)
+app.component('ColumnGroup', ColumnGroup)
+app.component('Row', Row)
+
+// Use router
+app.use(router)
+
+// Mount the app
+app.mount('#app')
