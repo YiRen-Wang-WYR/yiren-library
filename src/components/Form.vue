@@ -1,141 +1,146 @@
 <template>
-  <div class="container mt-5">
+  <div class="form-container">
     <div class="row">
       <div class="col-md-8 offset-md-2">
         <h1 class="text-center">User Information Form</h1>
 
-         <!-- When submitting, prevent the default refresh and instead call the submitForm -->
-        <form @submit.prevent="submitForm">
-          <!-- first row -->
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label for="username" class="form-label">Username</label>
-              <input type="text" class="form-control" id="username" 
-              @blur="() => validateName(true)"
-              @input="() => validateName(false)"
-              v-model="formData.username"/>
-            <div v-if="errors.username" class="text-danger">{{ errors.username }}</div>
-          </div>
-            <div class="col-md-6">
-              <label for="gender" class="form-label">Gender</label>
-              <select
-                id="gender"
-                class="form-select"
-                v-model="formData.gender"
-                @change="() => validateGender(true)"
-                @blur="() => validateGender(true)"
-              >
-                <option value="" disabled>Select…</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
-              <div v-if="errors.gender" class="text-danger">{{ errors.gender }}</div>
+        <form @submit.prevent="submitForm" class="card">
+          <div class="card-body">
+            <!-- first row -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" 
+                @blur="() => validateName(true)"
+                @input="() => validateName(false)"
+                v-model="formData.username"/>
+                <div v-if="errors.username" class="text-danger">{{ errors.username }}</div>
+              </div>
+              <div class="col-md-6">
+                <label for="gender" class="form-label">Gender</label>
+                <select
+                  id="gender"
+                  class="form-select"
+                  v-model="formData.gender"
+                  @change="() => validateGender(true)"
+                  @blur="() => validateGender(true)"
+                >
+                  <option value="" disabled>Select…</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+                <div v-if="errors.gender" class="text-danger">{{ errors.gender }}</div>
+              </div>
             </div>
-          </div>
 
-          <!-- second row - password fields -->
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label for="password" class="form-label">Password</label>
-              <input type="password" class="form-control" id="password"
-                @blur="() => validatePassword(true)"
-                @input="() => validatePassword(false)" 
-                v-model="formData.password"/>
-              <div v-if="errors.password" class="text-danger">{{ errors.password }}</div>
-            </div>
-            <div class="col-md-6">
-              <label for="confirm-password" class="form-label">Confirm password</label>
-              <input 
-                type="password"
-                class="form-control"
-                id="confirm-password"
-                v-model="formData.confirmPassword"
-                @blur="() => validateConfirmPassword(true)"
-                @input="() => validateConfirmPassword(false)"
-              />
-              <div v-if="errors.confirmPassword" class="text-danger">{{ errors.confirmPassword }}</div>
-            </div>
-          </div>
-
-          <!-- Third row: Are you an Australian resident? -->
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <div class="form-check">
-                <input
-                  id="isAustralian"
-                  type="checkbox"
-                  class="form-check-input"
-                  v-model="formData.isAustralian"
+            <!-- second row - password fields -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password"
+                  @blur="() => validatePassword(true)"
+                  @input="() => validatePassword(false)" 
+                  v-model="formData.password"/>
+                <div v-if="errors.password" class="text-danger">{{ errors.password }}</div>
+              </div>
+              <div class="col-md-6">
+                <label for="confirm-password" class="form-label">Confirm password</label>
+                <input 
+                  type="password"
+                  class="form-control"
+                  id="confirm-password"
+                  v-model="formData.confirmPassword"
+                  @blur="() => validateConfirmPassword(true)"
+                  @input="() => validateConfirmPassword(false)"
                 />
-                <label class="form-check-label" for="isAustralian">
-                  Australian Resident?
-                </label>
+                <div v-if="errors.confirmPassword" class="text-danger">{{ errors.confirmPassword }}</div>
               </div>
             </div>
-          </div>
 
-          <!-- Third row: Reasons for inclusion -->
-          <div class="mb-3">
-            <label for="reason" class="form-label">Reason for joining</label>
-            <textarea
-              id="reason"
-              class="form-control"
-              rows="3"
-              v-model="formData.reason"
-              :maxlength="REASON_MAX"
-              @input="() => validateReason(false)"
-              @blur="() => validateReason(true)"
-            ></textarea>
-            <div class="d-flex justify-content-between">
-              <div>
-                <small v-if="errors.reason" class="text-danger">{{ errors.reason }}</small>
-                <small v-if="successMessages.reason" class="text-success">{{ successMessages.reason }}</small>
+            <!-- Third row: Are you an Australian resident? -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input
+                    id="isAustralian"
+                    type="checkbox"
+                    class="form-check-input"
+                    v-model="formData.isAustralian"
+                  />
+                  <label class="form-check-label" for="isAustralian">
+                    Australian Resident?
+                  </label>
+                </div>
               </div>
-              <small class="text-muted ms-auto">{{ formData.reason.length }}/{{ REASON_MAX }}</small>
             </div>
-          </div>
 
-          <!-- button -->
-          <div class="text-center">
-            <button type="submit" class="btn btn-primary me-2">Submit</button>
-            <button type="button" class="btn btn-secondary" @click="clearForm">
-              Clear
-            </button>
+            <!-- Fourth row: Reasons for inclusion -->
+            <div class="mb-3">
+              <label for="reason" class="form-label">Reason for joining</label>
+              <textarea
+                id="reason"
+                class="form-control"
+                rows="3"
+                v-model="formData.reason"
+                :maxlength="REASON_MAX"
+                @input="() => validateReason(false)"
+                @blur="() => validateReason(true)"
+              ></textarea>
+              <div class="d-flex justify-content-between">
+                <div>
+                  <small v-if="errors.reason" class="text-danger">{{ errors.reason }}</small>
+                  <small v-if="successMessages.reason" class="text-success">{{ successMessages.reason }}</small>
+                </div>
+                <small class="text-muted ms-auto">{{ formData.reason.length }}/{{ REASON_MAX }}</small>
+              </div>
+            </div>
+
+            <!-- buttons -->
+            <div class="text-center mt-4">
+              <button type="submit" class="btn btn-primary me-2">Submit</button>
+              <button type="button" class="btn btn-secondary" @click="clearForm">
+                Clear
+              </button>
+            </div>
           </div>
         </form>
       </div>
     </div>
-  </div>
+
+    <!-- Submitted data table -->
     <div class="row mt-5" v-if="submittedCards.length">
       <div class="col-12 col-lg-10 offset-lg-1">
-      
-         <div class="card-header">
+        <div class="card">
+          <div class="card-header">
             User Information
-         </div>
-         <DataTable
-            :value="submittedCards"
-            stripedRows
-            :rows="5"
-            paginator
-            responsiveLayout="scroll"
-            tableStyle="min-width: 60rem; width: 100%"
-            class="mt-3"
-          >
-            <Column field="username" header="Username" />
-            <Column field="password" header="Password" />
-            <Column field="isAustralian" header="Australian Resident">
-  <template #body="{ data }">
-    {{ data.isAustralian ? 'Yes' : 'No' }}
-  </template>
-</Column>
-            <Column field="gender" header="Gender" />
-            <Column field="reason" header="Reason" />
-        </DataTable>
+          </div>
+          <div class="card-body">
+            <DataTable
+              :value="submittedCards"
+              stripedRows
+              :rows="5"
+              paginator
+              responsiveLayout="scroll"
+              tableStyle="min-width: 60rem; width: 100%"
+              class="mt-3"
+            >
+              <Column field="username" header="Username" />
+              <Column field="password" header="Password" />
+              <Column field="isAustralian" header="Australian Resident">
+                <template #body="{ data }">
+                  {{ data.isAustralian ? 'Yes' : 'No' }}
+                </template>
+              </Column>
+              <Column field="gender" header="Gender" />
+              <Column field="reason" header="Reason" />
+            </DataTable>
+          </div>
+        </div>
       </div>
-   </div>
-  </template>
-  
+    </div>
+  </div>
+</template>
 
 <script setup>
 import { ref } from 'vue';
@@ -261,19 +266,17 @@ const clearForm = () => {
 </script>
 
 <style scoped>
-   .card {
-   border: 1px solid #ccc;
-   border-radius: 10px;
-   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-   }
-   .card-header {
-   background-color: #275FDA;
-   color: white;
-   padding: 10px;
-   border-radius: 10px 10px 0 0;
-   }
-   .list-group-item {
-   padding: 10px;
-   }
+.form-container {
+  width: 100%;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.card-body {
+  padding: 2rem;
+}
 </style>
 
