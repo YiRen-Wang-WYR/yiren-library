@@ -2,7 +2,11 @@
 <template>
   <div class="app-container">
     <div class="container">
-      <header class="d-flex justify-content-center py-3">
+      <header class="d-flex justify-content-between align-items-center py-3">
+        <router-link to="/" class="text-decoration-none">
+          <h1 class="h3 m-0 text-primary">Yiren Library</h1>
+        </router-link>
+        
         <ul class="nav nav-pills">
           <li class="nav-item">
             <router-link to="/" class="nav-link" active-class="active" aria-current="page">Home</router-link>
@@ -12,6 +16,18 @@
           </li>
           <li class="nav-item">
             <router-link to="/register" class="nav-link" active-class="active">Register</router-link>
+          </li>
+          <li class="nav-item" v-if="authStore.isAdmin">
+            <router-link to="/management" class="nav-link" active-class="active">Management</router-link>
+          </li>
+          <li class="nav-item" v-if="!authStore.isAuthenticated">
+            <router-link to="/login" class="nav-link" active-class="active">Login</router-link>
+          </li>
+          <li class="nav-item" v-if="!authStore.isAuthenticated">
+            <router-link to="/firelogin" class="nav-link" active-class="active">Firelogin</router-link>
+          </li>
+          <li class="nav-item" v-else>
+            <button @click="handleLogout" class="nav-link">Logout</button>
           </li>
         </ul>
       </header>
@@ -26,8 +42,16 @@
 </template>
 
 <script setup>
-import JSON from './components/JSON.vue'  
-import Form from './components/Form.vue'
+import { useAuthStore } from './stores/auth';
+import { useRouter } from 'vue-router';
+
+const authStore = useAuthStore();
+const router = useRouter();
+
+const handleLogout = () => {
+  authStore.logout();
+  router.push('/login');
+};
 </script>
 
 <style>
@@ -97,6 +121,9 @@ h2 {
   padding: 0.5rem 1.5rem;
   margin: 0 0.5rem;
   transition: all 0.3s ease;
+  border: none;
+  background: none;
+  cursor: pointer;
 }
 
 .nav-pills .nav-link:hover {
