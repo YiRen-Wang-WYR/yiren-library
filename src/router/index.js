@@ -4,9 +4,21 @@ import { useAuthStore } from '../stores/auth'
 import FirebaseSigninView from '@/views/FirebaseSigninView.vue' 
 import AddBookView from '../views/AddBookView.vue'
 import GetBookCountView from '../views/GetBookCountView.vue';
+import WeatherView from '../views/WeatherView.vue'
+import CountBookAPI from '../views/CountBookAPI.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/CountBookAPI',
+      name: 'CountBookAPI',
+      component: CountBookAPI
+    },
+    {
+      path: '/WeatherCheck',
+      name: 'WeatherCheck',
+      component: WeatherView
+    },
     {
       path:'/GetBookCount',
       name:'GetBookCount',

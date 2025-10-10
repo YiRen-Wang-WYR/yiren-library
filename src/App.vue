@@ -1,12 +1,15 @@
-<!-- src/App.vue -->
 <template>
   <div class="app-container">
     <div class="container">
-      <header class="d-flex justify-content-between align-items-center py-3">
+      <!-- 这里根据路由是否为 CountBookAPI 决定是否渲染 Header -->
+      <header
+        v-if="showHeader"
+        class="d-flex justify-content-between align-items-center py-3"
+      >
         <router-link to="/" class="text-decoration-none">
           <h1 class="h3 m-0 text-primary">Yiren Library</h1>
         </router-link>
-        
+
         <ul class="nav nav-pills">
           <li class="nav-item">
             <router-link to="/" class="nav-link" active-class="active" aria-current="page">Home</router-link>
@@ -17,9 +20,11 @@
           <li class="nav-item">
             <router-link to="/register" class="nav-link" active-class="active">Register</router-link>
           </li>
+
           <li class="nav-item" v-if="authStore.isAdmin">
             <router-link to="/management" class="nav-link" active-class="active">Management</router-link>
           </li>
+
           <li class="nav-item" v-if="!authStore.isAuthenticated">
             <router-link to="/login" class="nav-link" active-class="active">Login</router-link>
           </li>
@@ -29,15 +34,18 @@
           <li class="nav-item" v-else>
             <button @click="handleLogout" class="nav-link">Logout</button>
           </li>
+
           <li class="nav-item">
-          <router-link to="/addbook" class="nav-link" active-class="active">
-                Add Book
-          </router-link>
+            <router-link to="/addbook" class="nav-link" active-class="active">Add Book</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/GetBookCount" class="nav-link" active-class="active">
-                  Get Book Count
-            </router-link>
+            <router-link to="/GetBookCount" class="nav-link" active-class="active">Get Book Count</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/WeatherCheck" class="nav-link" active-class="active">Get Weather</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/CountBookAPI" class="nav-link" active-class="active">Count Book API</router-link>
           </li>
         </ul>
       </header>
@@ -52,17 +60,24 @@
 </template>
 
 <script setup>
-import { useAuthStore } from './stores/auth';
-import { useRouter } from 'vue-router';
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from './stores/auth'
 
-const authStore = useAuthStore();
-const router = useRouter();
+const authStore = useAuthStore()
+const router = useRouter()
+const route = useRoute()
 
+// 是否显示 Header（当路由名不是 CountBookAPI 时显示）
+const showHeader = computed(() => route.name !== 'CountBookAPI')
+
+// 登出
 const handleLogout = () => {
-  authStore.logout();
-  router.push('/login');
-};
+  authStore.logout()
+  router.push('/login')
+}
 </script>
+
 
 <style>
 @import './assets/main.css';
