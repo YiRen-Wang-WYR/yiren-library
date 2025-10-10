@@ -2,9 +2,21 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { useAuthStore } from '../stores/auth'
 import FirebaseSigninView from '@/views/FirebaseSigninView.vue' 
+import AddBookView from '../views/AddBookView.vue'
+import GetBookCountView from '../views/GetBookCountView.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path:'/GetBookCount',
+      name:'GetBookCount',
+      component:GetBookCountView
+    },
+    {
+      path:'/addbook',
+      name:'AddBook',
+      component:AddBookView
+    },
     {
       path: '/firelogin',             
       name: 'firelogin',

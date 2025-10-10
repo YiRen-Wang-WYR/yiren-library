@@ -29,6 +29,16 @@
           <li class="nav-item" v-else>
             <button @click="handleLogout" class="nav-link">Logout</button>
           </li>
+          <li class="nav-item">
+          <router-link to="/addbook" class="nav-link" active-class="active">
+                Add Book
+          </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/GetBookCount" class="nav-link" active-class="active">
+                  Get Book Count
+            </router-link>
+          </li>
         </ul>
       </header>
     </div>

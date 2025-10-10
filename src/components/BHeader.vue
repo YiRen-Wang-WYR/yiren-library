@@ -15,6 +15,8 @@
           <li class="nav-item">
             <router-link to="/firelogin" class="nav-link" active-class="active">Firelogin</router-link>
           </li>
+          <li class="nav-item">
+            <router-link to="/addbook" class="nav-link" active-class="active">Add Book</router-link>
         </ul>
       </header>
     </div>
