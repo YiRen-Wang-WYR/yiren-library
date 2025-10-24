@@ -1,18 +1,34 @@
-// TS 写法；JS 把 import 改成 require 即可
-import { onRequest } from 'firebase-functions/v2/https'
-import { initializeApp } from 'firebase-admin/app'
-import { getFirestore } from 'firebase-admin/firestore'
+// functions/index.js
+const { onRequest } = require('firebase-functions/v2/https');
+const { initializeApp } = require('firebase-admin/app');
+const { getFirestore } = require('firebase-admin/firestore');
 
-initializeApp()
+initializeApp();
 
-export const getBookCount = onRequest(async (req, res) => {
-  // 可选：允许跨域
-  res.set('Access-Control-Allow-Origin', '*')
+// ✅ 获取书籍数量
+exports.getBookCount = onRequest(async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  try {
+    const db = getFirestore();
+    const snap = await db.collection('books').count().get();
+    const count = snap.data().count || 0;
+    res.status(200).json({ count });
+  } catch (err) {
+    console.error('Error getting book count:', err);
+    res.status(500).json({ error: 'Failed to get book count' });
+  }
+});
 
-  const db = getFirestore()
-  // 如果你在 Firestore 已开启 count 聚合（Node Admin SDK v11+）
-  const snap = await db.collection('books').count().get()
-  const count = snap.data().count || 0
-
-  res.json({ count })
-})
+// ✅ 新增：获取所有书籍（JSON）
+exports.getAllBooks = onRequest(async (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*'); // 允许跨域
+  try {
+    const db = getFirestore();
+    const snap = await db.collection('books').get();
+    const books = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.status(200).json({ books });
+  } catch (err) {
+    console.error('Error fetching books:', err);
+    res.status(500).json({ error: 'Failed to fetch books' });
+  }
+});

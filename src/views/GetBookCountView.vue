@@ -23,7 +23,6 @@
         loading: false,
       }
     },
-    // 如果想进页面就请求，可以保留 mounted；只想点按钮才请求就删掉它
     async mounted() {
       await this.getBookCount()
     },

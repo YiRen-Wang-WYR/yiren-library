@@ -20,14 +20,14 @@
   <script>
   import { ref } from 'vue'
   import db from '../firebase/init.js'
-  import { collection, addDoc } from 'firebase/firestore'   // ✅ 单数 addDoc
+  import { collection, addDoc } from 'firebase/firestore'  
   
-  // ✅ 注意大小写：文件为 BookList.vue，变量为 BookList
+  
   import BookList from '../components/BookList.vue'
   
   export default {
     components: {
-      BookList, // ✅ 注册时也用 BookList
+      BookList, 
     },
     setup() {
       const isbn = ref('')
@@ -41,7 +41,7 @@
             return
           }
   
-          // ✅ 使用 addDoc（单数）
+          //  use addDoc（singular）
           await addDoc(collection(db, 'books'), {
             isbn: isbnNumber,
             name: name.value,
